@@ -19,10 +19,16 @@ public abstract class SeiService<T> {
 	public RestTemplate getRestTemplate() {
 		return this.restTemplate;
 	}	
-	Optional<T> getElement(Long id) {
+	
+	public Optional<T> post(T object) {
 		return Optional.empty();
 	}
-	List<T> getElements() {
+	
+	public Optional<T> get(Long id) {
+		return Optional.empty();
+	}
+	
+	List<T> list() {
 		return List.of();
 	}
 
