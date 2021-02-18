@@ -2,14 +2,19 @@ package jus.trepe.br.sei.remote.service;
 
 import java.util.Optional;
 
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jus.trepe.br.sei.dto.SeiResponseEntity;
 import jus.trepe.br.sei.dto.Usuario;
+import jus.trepe.br.sei.remote.exception.SeiException;
 
 public class AuthenticationService extends SeiService<Usuario> {
 
@@ -29,22 +34,27 @@ public class AuthenticationService extends SeiService<Usuario> {
 		return "/autenticar";
 	}
 
-	@Override
-	public
-	Optional<Usuario> post(Usuario usuario) {
-		return Optional.ofNullable(this.getRestTemplate()
-										 .execute(getPath(), 
-												 HttpMethod.POST, 
-												 (request) -> {
-													 userMapper.writeValue(request.getBody(), usuario);
-												 },
-												 (response) -> {
-													 JsonNode dados = userMapper.readTree(response.getBody());
-													 System.out.println(dados);
-													 System.out.println(dados.get("dados"));
-													 return userMapper.treeToValue(dados.get("dados"), Usuario.class);
-												 }));
-				
+	public Optional<Usuario> post(Usuario usuario) {
+		ResponseEntity<SeiResponseEntity<Usuario>> response = 
+				this.getRestTemplate()
+				 .exchange(getPath(), 
+						 HttpMethod.POST, 
+						 new HttpEntity<Usuario>(usuario),
+					     new ParameterizedTypeReference<SeiResponseEntity<Usuario>>() {});
+		if (response.getStatusCode() == HttpStatus.OK) {	
+			verificaResponse(response.getBody());
+			return Optional.ofNullable(response.getBody().getEntidade());
+		} else {
+			return Optional.empty();
+		}
 	}
+
+	private void verificaResponse(SeiResponseEntity<Usuario> seiResponseEntity) {
+		if (seiResponseEntity.hasErrors()) {
+			throw new SeiException(seiResponseEntity.getMensagem());
+		}
+	}
+	
+	
 
 }
