@@ -19,7 +19,7 @@ public class ProcessoService extends SeiService<Processo> {
 	}
 
 	@Override
-	public Optional<Processo> getElement(Long id) {
+	public Optional<Processo> get(Long id) {
 		return Optional.ofNullable(getRestTemplate().getForObject(getPath(), Processo.class, Map.of("protocolo", id)));
 	}
 	

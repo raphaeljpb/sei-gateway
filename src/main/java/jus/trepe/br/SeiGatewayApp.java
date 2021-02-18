@@ -3,22 +3,27 @@ package jus.trepe.br;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 
 import jus.trepe.br.sei.dto.Processo;
+import jus.trepe.br.sei.dto.Usuario;
 import jus.trepe.br.sei.remote.SeiAccess;
+import jus.trepe.br.sei.remote.service.AuthenticationService;
 import jus.trepe.br.sei.remote.service.ProcessoService;
-import lombok.extern.slf4j.Slf4j;
+import jus.trepe.br.sei.remote.service.SeiService;
 
 /**
  * Hello world!
  *
  */
 
-@Slf4j
 public class SeiGatewayApp {
-	
+
 	public static void main(String[] args) {
-		SeiAccess sei = new SeiAccess("http://localhost:8080/sei/modulos/wssei/controlador_ws.php/api/v2");		
-		ProcessoService processoService = new ProcessoService(sei.buildTemplate(new RestTemplateBuilder()));
-		processoService.getElement(1L).ifPresent(System.out::println);
+		Usuario user = new Usuario("teste", "teste");
+		SeiAccess sei = new SeiAccess(user, "http://localhost:8080/sei/modulos/wssei/controlador_ws.php/api/v2");
+		SeiService<Usuario> auth = new AuthenticationService(sei.buildTemplate(new RestTemplateBuilder()));
+		auth.post(user).ifPresent( u-> user.setTokenAutenticacao(u.getTokenAutenticacao()));
+		
+		SeiService<Processo> processo = new ProcessoService(sei.buildTemplate(new RestTemplateBuilder()));
+		processo.get(1L).ifPresent(System.out::println);
 
 		
 //		String response = sei.getRestTemplate().getForObject("http://localhost:8080/sei/", String.class);
