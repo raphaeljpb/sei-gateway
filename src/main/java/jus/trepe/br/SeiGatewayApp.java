@@ -24,9 +24,7 @@ public class SeiGatewayApp {
 		
 		SeiService<Processo> processo = new ProcessoService(sei.buildTemplate(new RestTemplateBuilder()));
 		processo.get(1L).ifPresent(System.out::println);
+		processo.get(2L).ifPresent(System.out::println);
 
-		
-//		String response = sei.getRestTemplate().getForObject("http://localhost:8080/sei/", String.class);
-//		System.out.println(response);
 	}
 }

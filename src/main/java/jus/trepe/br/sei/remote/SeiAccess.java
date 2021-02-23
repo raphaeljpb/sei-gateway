@@ -1,16 +1,23 @@
 package jus.trepe.br.sei.remote;
 
+import java.io.IOException;
 import java.time.Duration;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 
 import jus.trepe.br.sei.dto.Usuario;
+import jus.trepe.br.sei.remote.error.SeiErrorHandler;
+import jus.trepe.br.sei.remote.service.AuthenticationService;
+import jus.trepe.br.sei.remote.service.SeiService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 public class SeiAccess {
 	
@@ -22,20 +29,55 @@ public class SeiAccess {
 	@NonNull
 	private static final String TOKEN_HEADER = "token";
 	
-	//TODO - adicionar autenticação->pode ser um request customizer or interceptor.
-	//Então, haverá requests sem autenticação e com autenticação.
 	public RestTemplate buildTemplate(RestTemplateBuilder builder) {
-		log.debug("Usando token: "+usuario.getTokenAutenticacao());
 		this.restTemplate = builder.setConnectTimeout(Duration.ofMinutes(TIMEOUT_MINUTES))
 			.setReadTimeout(Duration.ofMinutes(TIMEOUT_MINUTES))
 			.rootUri(baseUrl)
-			.defaultHeader(TOKEN_HEADER, usuario.getTokenAutenticacao())
+			.errorHandler(new SeiErrorHandler())
+			.additionalInterceptors(new SeiAuthHeaderInterceptor(this.usuario))
 			.build();
 		return this.restTemplate;
 	}	
 	
 	public RestTemplate getRestTemplate() {
 		return this.restTemplate;
+	}
+	
+	private class SeiAuthHeaderInterceptor implements ClientHttpRequestInterceptor {
+		
+		private Usuario usuario;
+		
+		public SeiAuthHeaderInterceptor(Usuario usuario) { 
+			this.usuario = usuario;
+		}
+
+		@Override
+		public ClientHttpResponse intercept(HttpRequest request, byte[] body, 
+				ClientHttpRequestExecution execution)
+				throws IOException {
+			
+			boolean authPath = request.getURI().getPath().endsWith("/autenticar");
+			boolean autenticado = Strings.isNotEmpty(usuario.getTokenAutenticacao());
+			
+			if (!authPath) {
+				if (!autenticado) {
+					auth();
+				}
+				request.getHeaders().add(TOKEN_HEADER, this.usuario.getTokenAutenticacao());			
+			} 
+			
+			ClientHttpResponse response = execution.execute(request, body);
+			
+			return response;
+		}
+		
+		private void auth() {
+			SeiService<Usuario> auth = new AuthenticationService(buildTemplate(new RestTemplateBuilder()));
+			auth.post(this.usuario).ifPresent( u-> {
+				this.usuario.setTokenAutenticacao(u.getTokenAutenticacao());
+			});
+				
+		}
 	}
 
 }
