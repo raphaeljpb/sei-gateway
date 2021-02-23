@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jus.trepe.br.sei.dto.SeiResponseEntity;
 import jus.trepe.br.sei.dto.Usuario;
 import jus.trepe.br.sei.remote.exception.SeiException;
+import jus.trepe.br.sei.remote.exception.TokenInvalidoException;
 
 public class AuthenticationService extends SeiService<Usuario> {
 
@@ -51,7 +52,11 @@ public class AuthenticationService extends SeiService<Usuario> {
 
 	private void verificaResponse(SeiResponseEntity<Usuario> seiResponseEntity) {
 		if (seiResponseEntity.hasErrors()) {
-			throw new SeiException(seiResponseEntity.getMensagem());
+			if (seiResponseEntity.getMensagem().equalsIgnoreCase(TokenInvalidoException.TOKEN_INVALIDO_MESSAGE)) {
+				throw new TokenInvalidoException(seiResponseEntity.getMensagem());
+			} else {
+				throw new SeiException(seiResponseEntity.getMensagem());
+			}
 		}
 	}
 	
