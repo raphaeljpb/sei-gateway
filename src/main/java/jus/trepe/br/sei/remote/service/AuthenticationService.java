@@ -1,6 +1,9 @@
 package jus.trepe.br.sei.remote.service;
 
+import java.util.Map;
+
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
 import jus.trepe.br.sei.dto.SeiResponseEntity;
@@ -13,8 +16,8 @@ public class AuthenticationService extends SeiService<Usuario> {
 	}
 
 	@Override
-	public String getPath() {
-		return "/autenticar";
+	public Map<HttpMethod, String> getPaths() {
+		return Map.of(HttpMethod.POST,"/autenticar");
 	}
 
 	@Override

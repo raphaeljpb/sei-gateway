@@ -13,12 +13,12 @@ import lombok.RequiredArgsConstructor;
 public class Usuario {
 	
 	@NonNull
-	@JsonProperty(value="usuario")
+	@JsonProperty("usuario")
 	private String login;
 	@NonNull
 	private String senha;
 	private String nome;
-	@JsonProperty(value="token")
+	@JsonProperty("token")
 	private String tokenAutenticacao;
 	
 }

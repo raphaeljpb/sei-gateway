@@ -11,7 +11,7 @@ import lombok.Data;
 public class SeiResponseEntity<T> {
 	
 	private boolean sucesso;
-	@JsonProperty(value = "data")
+	@JsonProperty("data")
 	private T entidade;
 	private String mensagem;
 	
