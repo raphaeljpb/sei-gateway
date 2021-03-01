@@ -1,6 +1,5 @@
 package jus.trepe.br.sei.remote.service;
 
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -12,8 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import jus.trepe.br.sei.dto.Processo;
-import jus.trepe.br.sei.dto.SeiResponseEntity;
+import jus.trepe.br.sei.remote.SeiResponseEntity;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 

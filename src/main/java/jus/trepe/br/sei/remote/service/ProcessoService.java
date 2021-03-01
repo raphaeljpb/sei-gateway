@@ -7,7 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
 import jus.trepe.br.sei.dto.Processo;
-import jus.trepe.br.sei.dto.SeiResponseEntity;
+import jus.trepe.br.sei.remote.SeiResponseEntity;
 
 public class ProcessoService extends SeiService<Processo> {
 

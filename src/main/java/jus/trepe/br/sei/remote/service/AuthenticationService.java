@@ -6,8 +6,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
-import jus.trepe.br.sei.dto.SeiResponseEntity;
 import jus.trepe.br.sei.dto.Usuario;
+import jus.trepe.br.sei.remote.SeiResponseEntity;
 
 public class AuthenticationService extends SeiService<Usuario> {
 

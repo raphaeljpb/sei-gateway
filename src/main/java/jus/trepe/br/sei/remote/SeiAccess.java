@@ -1,19 +1,14 @@
 package jus.trepe.br.sei.remote;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.lang.reflect.Type;
 import java.time.Duration;
 
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import jus.trepe.br.sei.dto.Usuario;
@@ -40,7 +35,6 @@ public class SeiAccess {
 			.rootUri(baseUrl)
 			.errorHandler(new SeiErrorHandler())
 			.additionalInterceptors(new SeiAuthHeaderInterceptor(this.usuario))
-			.additionalMessageConverters(new SeiJsonConverter())
 			.build();
 		return this.restTemplate;
 	}	
@@ -84,22 +78,6 @@ public class SeiAccess {
 			});
 				
 		}
-	}
-	
-	private class SeiJsonConverter extends MappingJackson2HttpMessageConverter {
-
-		@Override
-		public Object read(Type type, Class<?> contextClass, HttpInputMessage inputMessage)
-				throws IOException, HttpMessageNotReadableException {
-			// TODO Auto-generated method stub
-			System.out.println(new String(inputMessage.getBody().readAllBytes()));
-			//modificar inputstream
-			return super.read(type, contextClass, inputMessage);
-		}
-
-		
-		
-		
 	}
 
 }
