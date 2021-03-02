@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class InnerWrapperObjectDeserializer extends JsonDeserializer<Object> implements ContextualDeserializer {
@@ -37,7 +38,6 @@ public class InnerWrapperObjectDeserializer extends JsonDeserializer<Object> imp
 		JsonNode wrapped = objectNode.get(wrapperKey);
 		Object mapped = null;
 		if (wrapped != null) {
-			//adicionar nó geral ao nó atributos
 			addRootAttributes(objectNode, wrapped);
 			mapped = mapIntoObject(wrapped);
 		} else {
@@ -63,10 +63,11 @@ public class InnerWrapperObjectDeserializer extends JsonDeserializer<Object> imp
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		
-//		SimpleModule module = new SimpleModule("BooleanDeserializerModule");
-//		module.addDeserializer(Boolean.class, new SimNaoDeserializer());
-//		
-//		mapper.registerModule(module);
+		SimpleModule module = new SimpleModule("BooleanDeserializerModule");
+		module.addDeserializer(Boolean.class, new SimNaoDeserializer());
+		module.addDeserializer(Boolean.TYPE, new SimNaoDeserializer());
+		
+		mapper.registerModule(module);
 		
 		return mapper;
 	}

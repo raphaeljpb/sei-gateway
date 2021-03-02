@@ -3,6 +3,7 @@ package jus.trepe.br.sei.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jus.trepe.br.sei.dto.processo.Informacoes;
+import jus.trepe.br.sei.dto.processo.TipoProcedimento;
 import lombok.Data;
 
 @Data
@@ -18,6 +19,6 @@ public class Processo {
 	private String descricao;
 	private Unidade unidade;
 	@JsonProperty("status")
-	private Informacoes opcoes;
+	private Informacoes informacoes;
 }
 
