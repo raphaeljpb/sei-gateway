@@ -1,6 +1,7 @@
 package jus.trepe.br.sei.remote.service;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -23,6 +24,10 @@ public class AuthenticationService extends SeiService<Usuario> {
 	@Override
 	public ParameterizedTypeReference<SeiResponseEntity<Usuario>> getParameterizedTypeReference() {
 		return new ParameterizedTypeReference<SeiResponseEntity<Usuario>>(){};
+	}
+	
+	public Optional<Usuario> autenticar(Usuario usuario) {
+		return this.post(usuario);
 	}
 
 }

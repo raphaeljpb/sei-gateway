@@ -1,15 +1,19 @@
 package jus.trepe.br.sei.remote.service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jus.trepe.br.sei.remote.SeiResponseEntity;
 import lombok.NonNull;
@@ -29,7 +33,8 @@ public abstract class SeiService<T> {
 		return this.restTemplate;
 	}	
 	
-	public Optional<T> post(T object) {
+	protected Optional<T> post(T object) {
+		
 		ResponseEntity<SeiResponseEntity<T>> response = 
 				getRestTemplate()
 				 .exchange(getPaths().get(HttpMethod.POST), 
@@ -44,7 +49,37 @@ public abstract class SeiService<T> {
 		}		
 	}
 	
-	public Optional<T> get(Long id) {		
+	@SuppressWarnings("rawtypes")
+	protected Optional<?> post(String path, Object payload, Map<String, ?> params) {
+		MultiValueMap<String, Object> form = new LinkedMultiValueMap<>();
+		ObjectMapper mapper = new ObjectMapper();
+
+		@SuppressWarnings("unchecked")
+		Map<String, Object> maps = mapper.convertValue(payload, Map.class);
+		form.setAll(maps);
+	
+		ResponseEntity<SeiResponseEntity<Map>> response = 
+				getRestTemplate()
+				 .exchange(path, 
+						 HttpMethod.POST, 
+						 new HttpEntity<MultiValueMap<String, Object>>(form),
+						 new ParameterizedTypeReference<SeiResponseEntity<Map>>(){},
+						 params);
+		
+		if (response.getStatusCode() == HttpStatus.OK) {	
+			verificaResponse((SeiResponseEntity<Map>) response.getBody());
+			return Optional.ofNullable(response.getBody().getEntidade());
+		} else {
+			return Optional.empty();
+		} 
+	}
+	
+	protected Optional<?> post(String path, Object payload) {
+		return this.post(path, payload, Map.of());
+	}
+		
+	
+	protected Optional<T> get(Long id) {		
 		ResponseEntity<SeiResponseEntity<T>> response = 
 				getRestTemplate().exchange(getPaths().get(HttpMethod.GET),
 				HttpMethod.GET, null, getParameterizedTypeReference(), id);
@@ -56,11 +91,7 @@ public abstract class SeiService<T> {
 		}
 	}
 	
-	List<T> list() {
-		return List.of();
-	}
-	
-	protected void verificaResponse(SeiResponseEntity<T> seiResponseEntity) {
+	protected void verificaResponse(SeiResponseEntity<?> seiResponseEntity) {
 		seiResponseEntity.validate();
 	}
 

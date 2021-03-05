@@ -15,7 +15,6 @@ import org.springframework.web.client.RestTemplate;
 import jus.trepe.br.sei.dto.Usuario;
 import jus.trepe.br.sei.remote.error.SeiErrorHandler;
 import jus.trepe.br.sei.remote.service.AuthenticationService;
-import jus.trepe.br.sei.remote.service.SeiService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -70,14 +69,12 @@ public class SeiAccess {
 				request.getHeaders().add(TOKEN_HEADER, this.usuario.getTokenAutenticacao());			
 			} 
 			
-			ClientHttpResponse response = execution.execute(request, body);
-			
-			return response;
+			return execution.execute(request, body);
 		}
 		
 		private void auth() {
-			SeiService<Usuario> auth = new AuthenticationService(buildTemplate(new RestTemplateBuilder()));
-			auth.post(this.usuario).ifPresent( u-> {
+			AuthenticationService auth = new AuthenticationService(buildTemplate(new RestTemplateBuilder()));
+			auth.autenticar(this.usuario).ifPresent( u-> {
 				this.usuario.setTokenAutenticacao(u.getTokenAutenticacao());
 			});
 				
