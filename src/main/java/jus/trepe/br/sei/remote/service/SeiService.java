@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,32 +24,11 @@ public abstract class SeiService<T> {
 	@NonNull
 	protected RestTemplate restTemplate;
 	
-	public abstract Map<HttpMethod, String> getPaths();
-	
-	public abstract ParameterizedTypeReference<SeiResponseEntity<T>> getParameterizedTypeReference();
-	
 	public RestTemplate getRestTemplate() {
 		return this.restTemplate;
 	}	
 	
-	protected Optional<T> post(T object) {
-		
-		ResponseEntity<SeiResponseEntity<T>> response = 
-				getRestTemplate()
-				 .exchange(getPaths().get(HttpMethod.POST), 
-						 HttpMethod.POST, 
-						 new HttpEntity<T>(object),
-					     getParameterizedTypeReference());
-		if (response.getStatusCode() == HttpStatus.OK) {	
-			verificaResponse(response.getBody());
-			return Optional.ofNullable(response.getBody().getEntidade());
-		} else {
-			return Optional.empty();
-		}		
-	}
-	
-	@SuppressWarnings("rawtypes")
-	protected Optional<?> post(String path, Object payload, Map<String, ?> params) {
+	protected Optional<T> post(String path, Object payload, ParameterizedTypeReference<SeiResponseEntity<T>> responseType, Map<String, ?> params) {
 		MultiValueMap<String, Object> form = new LinkedMultiValueMap<>();
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -58,31 +36,38 @@ public abstract class SeiService<T> {
 		Map<String, Object> maps = mapper.convertValue(payload, Map.class);
 		form.setAll(maps);
 	
-		ResponseEntity<SeiResponseEntity<Map>> response = 
+		ResponseEntity<SeiResponseEntity<T>> response = 
 				getRestTemplate()
 				 .exchange(path, 
 						 HttpMethod.POST, 
 						 new HttpEntity<MultiValueMap<String, Object>>(form),
-						 new ParameterizedTypeReference<SeiResponseEntity<Map>>(){},
+						 responseType,
 						 params);
 		
 		if (response.getStatusCode() == HttpStatus.OK) {	
-			verificaResponse((SeiResponseEntity<Map>) response.getBody());
+			verificaResponse(response.getBody());
 			return Optional.ofNullable(response.getBody().getEntidade());
 		} else {
 			return Optional.empty();
 		} 
 	}
 	
+	protected Optional<T> post(String path, Object payload, ParameterizedTypeReference<SeiResponseEntity<T>> responseType) {
+		return this.post(path, payload, responseType, Map.of());
+	}
+	
+	protected Optional<?> post(String path, Object payload, Map<String, ?> params) {
+		return this.post(path, payload, new ParameterizedTypeReference<SeiResponseEntity<T>>(){}, params);
+	}	
+	
 	protected Optional<?> post(String path, Object payload) {
 		return this.post(path, payload, Map.of());
 	}
-		
 	
-	protected Optional<T> get(Long id) {		
+	protected Optional<T> get(String path, ParameterizedTypeReference<SeiResponseEntity<T>> responseType, Map<String, ?> params) {		
 		ResponseEntity<SeiResponseEntity<T>> response = 
-				getRestTemplate().exchange(getPaths().get(HttpMethod.GET),
-				HttpMethod.GET, null, getParameterizedTypeReference(), id);
+				getRestTemplate().exchange(path,
+				HttpMethod.GET, null, responseType, params);
 		if (response.getStatusCode() == HttpStatus.OK) {	
 			verificaResponse(response.getBody());
 			return Optional.ofNullable(response.getBody().getEntidade());
@@ -91,7 +76,16 @@ public abstract class SeiService<T> {
 		}
 	}
 	
-	protected void verificaResponse(SeiResponseEntity<?> seiResponseEntity) {
+	protected Optional<T> get(String path, ParameterizedTypeReference<SeiResponseEntity<T>> responseType) {
+		return this.get(path, responseType, Map.of());
+	}
+	
+	protected Optional<T> get(String path) {
+		return this.get(path, new ParameterizedTypeReference<SeiResponseEntity<T>>(){}, Map.of());
+	}
+		
+	
+	private void verificaResponse(SeiResponseEntity<?> seiResponseEntity) {
 		seiResponseEntity.validate();
 	}
 

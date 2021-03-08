@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
 import jus.trepe.br.sei.dto.Processo;
@@ -12,29 +11,20 @@ import jus.trepe.br.sei.dto.request.ProcessoCreate;
 import jus.trepe.br.sei.remote.SeiResponseEntity;
 
 public class ProcessoService extends SeiService<Processo> {
+	
+	private static final String GET_PATH = "/processo/{protocolo}";
+	private static final String CREATE_PATH = "/processo/criar";
 
 	public ProcessoService(RestTemplate restTemplate) {
 		super(restTemplate);
 	}
 
-	@Override
-	public Map<HttpMethod, String> getPaths() {
-		return Map.of(HttpMethod.GET,"/processo/{protocolo}", 
-				HttpMethod.POST, "/processo/criar");
-	}
-
-	@Override
-	public ParameterizedTypeReference<SeiResponseEntity<Processo>> getParameterizedTypeReference() {
-		return new ParameterizedTypeReference<SeiResponseEntity<Processo>>(){};
-	}
-	
-	@Override
 	public Optional<Processo> get(Long id) {
-		return super.get(id);
+		return get(GET_PATH, new ParameterizedTypeReference<SeiResponseEntity<Processo>>(){}, Map.of("protocolo", id));
 	}
 
 	public Optional<?> criar(ProcessoCreate processo) {
-		return post(getPaths().get(HttpMethod.POST), processo);
+		return post(CREATE_PATH, processo);
 	}
 	
 }
