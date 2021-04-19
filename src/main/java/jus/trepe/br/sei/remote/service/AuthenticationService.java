@@ -1,25 +1,23 @@
 package jus.trepe.br.sei.remote.service;
 
+import java.util.Optional;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestTemplate;
 
-import jus.trepe.br.sei.dto.SeiResponseEntity;
 import jus.trepe.br.sei.dto.Usuario;
+import jus.trepe.br.sei.remote.SeiResponseEntity;
 
 public class AuthenticationService extends SeiService<Usuario> {
+	
+	private static final String AUTH_PATH = "/autenticar";
 
 	public AuthenticationService(RestTemplate restTemplate) {
 		super(restTemplate);
 	}
 
-	@Override
-	public String getPath() {
-		return "/autenticar";
-	}
-
-	@Override
-	public ParameterizedTypeReference<SeiResponseEntity<Usuario>> getParameterizedTypeReference() {
-		return new ParameterizedTypeReference<SeiResponseEntity<Usuario>>(){};
+	public Optional<Usuario> autenticar(Usuario usuario) {
+		return this.post(AUTH_PATH, usuario, new ParameterizedTypeReference<SeiResponseEntity<Usuario>>(){});
 	}
 
 }

@@ -2,6 +2,7 @@ package jus.trepe.br.sei.remote;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
 
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -14,7 +15,6 @@ import org.springframework.web.client.RestTemplate;
 import jus.trepe.br.sei.dto.Usuario;
 import jus.trepe.br.sei.remote.error.SeiErrorHandler;
 import jus.trepe.br.sei.remote.service.AuthenticationService;
-import jus.trepe.br.sei.remote.service.SeiService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +28,7 @@ public class SeiAccess {
 	private final String baseUrl;
 	@NonNull
 	private static final String TOKEN_HEADER = "token";
+	private static final List<String> IGNORE_PATHS = List.of("/autenticar");
 	
 	public RestTemplate buildTemplate(RestTemplateBuilder builder) {
 		this.restTemplate = builder.setConnectTimeout(Duration.ofMinutes(TIMEOUT_MINUTES))
@@ -56,7 +57,9 @@ public class SeiAccess {
 				ClientHttpRequestExecution execution)
 				throws IOException {
 			
-			boolean authPath = request.getURI().getPath().endsWith("/autenticar");
+			boolean authPath = IGNORE_PATHS.stream().anyMatch((path) -> {
+				return request.getURI().getPath().endsWith(path);
+			});
 			boolean autenticado = Strings.isNotEmpty(usuario.getTokenAutenticacao());
 			
 			if (!authPath) {
@@ -66,14 +69,12 @@ public class SeiAccess {
 				request.getHeaders().add(TOKEN_HEADER, this.usuario.getTokenAutenticacao());			
 			} 
 			
-			ClientHttpResponse response = execution.execute(request, body);
-			
-			return response;
+			return execution.execute(request, body);
 		}
 		
 		private void auth() {
-			SeiService<Usuario> auth = new AuthenticationService(buildTemplate(new RestTemplateBuilder()));
-			auth.post(this.usuario).ifPresent( u-> {
+			AuthenticationService auth = new AuthenticationService(buildTemplate(new RestTemplateBuilder()));
+			auth.autenticar(this.usuario).ifPresent( u-> {
 				this.usuario.setTokenAutenticacao(u.getTokenAutenticacao());
 			});
 				
