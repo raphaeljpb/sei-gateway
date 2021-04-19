@@ -1,6 +1,11 @@
 package jus.trepe.br.sei.remote;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import jus.trepe.br.sei.remote.exception.AcessoNegadoException;
@@ -18,17 +23,27 @@ public class SeiResponseEntity<T> {
 	@JsonDeserialize(using = InnerWrapperObjectDeserializer.class)
 	@InnerWrapperObject("atributos")	
 	private T entidade;
-	private String mensagem;
+	private List<String> mensagens = new ArrayList<>();
 	
 	public void validate() {
 		if (!sucesso) {
-			if (this.mensagem.equalsIgnoreCase(TokenInvalidoException.TOKEN_INVALIDO_MESSAGE)) {
-				throw new TokenInvalidoException(this.mensagem);
-			} else if (this.mensagem.equalsIgnoreCase(AcessoNegadoException.ACESSO_NEGADO_MESSAGE)) {
-				throw new AcessoNegadoException(this.mensagem);
+			if (mensagens.contains(TokenInvalidoException.TOKEN_INVALIDO_MESSAGE)) {
+				throw new TokenInvalidoException(mensagens.toString());
+			} else if (mensagens.contains(AcessoNegadoException.ACESSO_NEGADO_MESSAGE)) {
+				throw new AcessoNegadoException(mensagens.toString());
 			} else {
-				throw new SeiException(this.mensagem);
+				throw new SeiException(mensagens.toString());
 			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@JsonSetter(value="mensagem", nulls=Nulls.AS_EMPTY)
+	public void configuraMensagem(Object mensagem) {
+		if (mensagem instanceof List) {
+			mensagens.addAll((List<String>) mensagem);   
+		} else {
+			mensagens.add(mensagem.toString());
 		}
 	}
 }

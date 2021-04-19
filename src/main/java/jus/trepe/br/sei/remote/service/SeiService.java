@@ -64,10 +64,11 @@ public abstract class SeiService<T> {
 		return this.post(path, payload, Map.of());
 	}
 	
-	protected Optional<T> get(String path, ParameterizedTypeReference<SeiResponseEntity<T>> responseType, Map<String, ?> params) {		
+	protected Optional<T> get(String path, Map<String, ?> payload, 
+			ParameterizedTypeReference<SeiResponseEntity<T>> responseType, Map<String, ?> params) {		
 		ResponseEntity<SeiResponseEntity<T>> response = 
 				getRestTemplate().exchange(path,
-				HttpMethod.GET, null, responseType, params);
+				HttpMethod.GET, new HttpEntity<Map<String, ?>>(payload), responseType, params);
 		if (response.getStatusCode() == HttpStatus.OK) {	
 			verificaResponse(response.getBody());
 			return Optional.ofNullable(response.getBody().getEntidade());
@@ -76,12 +77,20 @@ public abstract class SeiService<T> {
 		}
 	}
 	
+	protected Optional<T> get(String path, Map<String, ?> payload, ParameterizedTypeReference<SeiResponseEntity<T>> responseType) {
+		return this.get(path, payload, responseType, Map.of());
+	}	
+	
+	protected Optional<T> get(String path, ParameterizedTypeReference<SeiResponseEntity<T>> responseType, Map<String, ?> params) {
+		return this.get(path, null, responseType, params);
+	}	
+	
 	protected Optional<T> get(String path, ParameterizedTypeReference<SeiResponseEntity<T>> responseType) {
-		return this.get(path, responseType, Map.of());
+		return this.get(path, null, responseType, Map.of());
 	}
 	
 	protected Optional<T> get(String path) {
-		return this.get(path, new ParameterizedTypeReference<SeiResponseEntity<T>>(){}, Map.of());
+		return this.get(path, null, new ParameterizedTypeReference<SeiResponseEntity<T>>(){}, Map.of());
 	}
 		
 	

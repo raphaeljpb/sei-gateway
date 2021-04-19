@@ -1,5 +1,7 @@
 package jus.trepe.br;
 
+import java.util.Optional;
+
 import org.springframework.boot.web.client.RestTemplateBuilder;
 
 import jus.trepe.br.sei.dto.Assunto;
@@ -7,6 +9,8 @@ import jus.trepe.br.sei.dto.Usuario;
 import jus.trepe.br.sei.dto.processo.NivelAcesso;
 import jus.trepe.br.sei.dto.processo.TipoProcesso;
 import jus.trepe.br.sei.dto.request.ProcessoCreate;
+import jus.trepe.br.sei.dto.request.ProcessoUpdate;
+import jus.trepe.br.sei.dto.response.ProcessoCreateResponse;
 import jus.trepe.br.sei.remote.SeiAccess;
 import jus.trepe.br.sei.remote.service.ProcessoService;
 
@@ -32,8 +36,19 @@ public class SeiGatewayApp {
 			.setNivelAcesso(NivelAcesso.PUBLICO)
 			.addAssunto(Assunto.ASSUNTOS.get(2));
 		
-		Object o = processoService.criar(novo);
-		System.out.println(o);
+		Optional<ProcessoCreateResponse> response = processoService.create(novo);
+		response.ifPresent((processo) -> {
+			processoService.get(processo.getProtocolo()).ifPresent(System.out::println);
+			
+			ProcessoUpdate update = new ProcessoUpdate();
+			update.setId(processo.getId())
+								 .setTipo(TipoProcesso.TIPOS.get(1))
+								 .setNivelAcesso(NivelAcesso.PUBLICO)
+								 .setObservacao("Processo Alterado")
+								 .addAssunto(Assunto.ASSUNTOS.get(0));
+			processoService.update(update);			
+			processoService.get(processo.getId()).ifPresent(System.out::println);
+		});
 
 	}
 }

@@ -11,12 +11,12 @@ import lombok.Data;
 public class Assunto {
 
 	public static final List<Assunto> ASSUNTOS;
-	private int id;
+	private Integer id;
 	@JsonIgnore
 	private String descricao;
 
 	static {
-		ASSUNTOS = Arrays.asList(new Assunto(1, "ADMINISTRAÇÃO GERAL"),
+		ASSUNTOS = Arrays.asList(new Assunto(4, "RELATÓRIOS DE ATIVIDADES"),
 				new Assunto(2, "MODERNIZAÇÃO E REFORMA ADMINISTRATIVA (inclusive Projetos, Estudos e Normas)"),
 				new Assunto(5, "ACORDOS. AJUSTES. CONTRATOS. CONVÊNIOS (Inclusive formalização, execução, acompanhamento, fiscalização, prestação de contas, tomada de contas e tomada de contas especial de convênios, contratos de repasse, termos de parceria e termos de cooperação)"));
 	}

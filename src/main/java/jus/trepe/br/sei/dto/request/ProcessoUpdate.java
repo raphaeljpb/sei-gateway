@@ -2,7 +2,9 @@ package jus.trepe.br.sei.dto.request;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,33 +19,46 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Data
-@NoArgsConstructor
 @JsonInclude(Include.NON_EMPTY)
-public class ProcessoCreate {
-
+@NoArgsConstructor
+public class ProcessoUpdate {
+	@NonNull
+	private Long id;
 	@NonNull
 	private List<Assunto> assuntos = new ArrayList<>();
 	private List<Interessado> interessados = new ArrayList<>();
 	private String especificacao;
-	private String observacoes;
+	private String observacao;
+	@JsonProperty("idTipoProcesso")
 	@NonNull
-	@JsonProperty("tipoProcesso")
 	private TipoProcesso tipo;
 	@NonNull
 	private NivelAcesso nivelAcesso;
+	@JsonProperty("idHipoteseLegal")
 	private HipoteseLegal hipoteseLegal;
 	
-	public ProcessoCreate addAssunto(Assunto assunto) {
+	public ProcessoUpdate addAssunto(Assunto assunto) {
 		assuntos.add(assunto);
-		
 		return this;
 	}
 	
-	public ProcessoCreate addInteressado(Interessado interessado) {
+	public ProcessoUpdate addInteressado(Interessado interessado) {
 		interessados.add(interessado);
-		
 		return this;
+	}		
+	
+	@JsonGetter("assuntos")
+	public String getAssuntos() {
+		return assuntos.stream()
+				.map(assunto -> assunto.getId().toString())
+				.collect(Collectors.joining(","));
+	}
+	
+	@JsonGetter("interessados")
+	public String getInteressados() {
+		return interessados.stream()
+				.map(interessado -> interessado.getId().toString())
+				.collect(Collectors.joining(","));
 	}	
-	
-	
+
 }
