@@ -3,6 +3,7 @@ package jus.trepe.br.sei.remote.service;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +15,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import jus.trepe.br.sei.dto.request.FormSubmission;
+import jus.trepe.br.sei.remote.SeiAccess;
 import jus.trepe.br.sei.remote.SeiResponseEntity;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,10 @@ public abstract class SeiService<T> {
 	
 	@NonNull
 	protected RestTemplate restTemplate;
+	
+	public SeiService(SeiAccess access) {
+		this(access.buildTemplate(new RestTemplateBuilder()));
+	}
 	
 	public RestTemplate getRestTemplate() {
 		return this.restTemplate;

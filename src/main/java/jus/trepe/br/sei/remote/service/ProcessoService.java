@@ -20,7 +20,7 @@ public class ProcessoService extends SeiService {
 	private static final String CREATE_PATH = "/processo/criar";
 	private static final String UPDATE_PATH = "/processo/{id}/alterar";
 	private static final String GET_PROTOCOLO_PATH = "/processo/consultar?protocoloFormatado={protocoloFormatado}";
-
+	
 	public ProcessoService(RestTemplate restTemplate) {
 		super(restTemplate);
 	}

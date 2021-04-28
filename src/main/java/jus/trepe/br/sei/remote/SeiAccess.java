@@ -22,12 +22,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SeiAccess {
 	
-	private static final int TIMEOUT_MINUTES = 1;
 	private RestTemplate restTemplate;
 	@NonNull
 	private Usuario usuario;
-	private final String baseUrl;
 	@NonNull
+	private final String baseUrl;
+	private static final int TIMEOUT_MINUTES = 1;
 	private static final String TOKEN_HEADER = "token";
 	private static final String UNIDADE_HEADER = "unidade";
 	private static final List<String> IGNORE_PATHS = List.of("/autenticar");
@@ -44,6 +44,14 @@ public class SeiAccess {
 	
 	public RestTemplate getRestTemplate() {
 		return this.restTemplate;
+	}
+	
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+	
+	public void logout() {
+		usuario = new Usuario();
 	}
 	
 	private class SeiAuthHeaderInterceptor implements ClientHttpRequestInterceptor {
@@ -81,12 +89,9 @@ public class SeiAccess {
 				this.usuario.setTokenAutenticacao(u.getTokenAutenticacao());
 				String unidade = (String) u.getLoginData().get("IdUnidadeAtual");
 				if (unidade != null) {
-					this.usuario.setUnidade(
-							new Unidade(Long.parseLong(unidade)));
+					this.usuario.setUnidade(new Unidade(Long.parseLong(unidade)));
 				}
 			});
-				
 		}
 	}
-
 }

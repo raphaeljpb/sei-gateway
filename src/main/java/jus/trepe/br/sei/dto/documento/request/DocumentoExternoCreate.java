@@ -21,7 +21,7 @@ import lombok.NonNull;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class DocumentoExternoCreate extends DocumentoCreate implements FormSubmission {
+public class DocumentoExternoCreate extends DocumentoCreate {
 	
 	private String numero;
 	@NonNull
@@ -36,12 +36,9 @@ public class DocumentoExternoCreate extends DocumentoCreate implements FormSubmi
 	
 	@Override
 	public MultiValueMap<String, Object> submitFields() {
-		MultiValueMap<String, Object> form =  FormSubmission.super.submitFields();
+		MultiValueMap<String, Object> form = super.submitFields();
 		form.add("anexo", anexo);
 		
 		return form;
 	}
-
-	
-	
 }
