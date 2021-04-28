@@ -1,0 +1,47 @@
+package jus.trepe.br.sei.dto.documento.request;
+
+import java.time.LocalDate;
+
+import org.springframework.core.io.Resource;
+import org.springframework.util.MultiValueMap;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+
+import jus.trepe.br.sei.dto.documento.TipoConferencia;
+import jus.trepe.br.sei.dto.request.FormSubmission;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+public class DocumentoExternoCreate extends DocumentoCreate implements FormSubmission {
+	
+	private String numero;
+	@NonNull
+	@JsonSerialize(using = LocalDateSerializer.class)
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd/MM/yyyy")
+	private LocalDate dataElaboracao;
+	@JsonProperty("idTipoConferencia")
+	private TipoConferencia tipoConferencia;
+	@NonNull
+	@JsonIgnore
+	private Resource anexo;
+	
+	@Override
+	public MultiValueMap<String, Object> submitFields() {
+		MultiValueMap<String, Object> form =  FormSubmission.super.submitFields();
+		form.add("anexo", anexo);
+		
+		return form;
+	}
+
+	
+	
+}
