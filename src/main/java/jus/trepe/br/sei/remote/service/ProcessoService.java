@@ -6,19 +6,20 @@ import java.util.Optional;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestTemplate;
 
-import jus.trepe.br.sei.dto.Processo;
-import jus.trepe.br.sei.dto.request.ProcessoCreate;
-import jus.trepe.br.sei.dto.request.ProcessoUpdate;
-import jus.trepe.br.sei.dto.response.ProcessoCreateResponse;
+import jus.trepe.br.sei.dto.processo.request.ProcessoCreate;
+import jus.trepe.br.sei.dto.processo.request.ProcessoUpdate;
+import jus.trepe.br.sei.dto.processo.response.Processo;
+import jus.trepe.br.sei.dto.processo.response.ProcessoCreateResponse;
+import jus.trepe.br.sei.dto.processo.response.ProcessoFindResponse;
 import jus.trepe.br.sei.remote.SeiResponseEntity;
 
 @SuppressWarnings("rawtypes")
 public class ProcessoService extends SeiService {
 	
-	private static final String GET_PATH = "/processo/{protocolo}";
+	private static final String GET_PATH = "/processo/{id}";
 	private static final String CREATE_PATH = "/processo/criar";
-	private static final String UPDATE_PATH = "/processo/{protocolo}/alterar";
-	private static final String SEARCH_PATH = "/processo/pesquisar";
+	private static final String UPDATE_PATH = "/processo/{id}/alterar";
+	private static final String GET_PROTOCOLO_PATH = "/processo/consultar?protocoloFormatado={protocoloFormatado}";
 
 	public ProcessoService(RestTemplate restTemplate) {
 		super(restTemplate);
@@ -26,12 +27,12 @@ public class ProcessoService extends SeiService {
 
 	@SuppressWarnings("unchecked")
 	public Optional<Processo> get(Long id) {
-		return get(GET_PATH, new ParameterizedTypeReference<SeiResponseEntity<Processo>>(){}, Map.of("protocolo", id));
+		return get(GET_PATH, new ParameterizedTypeReference<SeiResponseEntity<Processo>>(){}, Map.of("id", id));
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Optional<?> get(String protocolo) {
-		return get(SEARCH_PATH, Map.of("buscaRapida", protocolo), new ParameterizedTypeReference<SeiResponseEntity<Processo>>(){});
+	public Optional<ProcessoFindResponse> get(String protocolo) {
+		return get(GET_PROTOCOLO_PATH, new ParameterizedTypeReference<SeiResponseEntity<ProcessoFindResponse>>(){}, Map.of("protocoloFormatado", protocolo));
 	}	
 
 	@SuppressWarnings("unchecked")
@@ -41,11 +42,7 @@ public class ProcessoService extends SeiService {
 	
 	@SuppressWarnings("unchecked")
 	public Optional<?> update(ProcessoUpdate processo) {
-		return post(UPDATE_PATH, processo, Map.of("protocolo", processo.getId()));
+		return post(UPDATE_PATH, processo, Map.of("id", processo.getId()));
 	}	
-	
-	public void addDocumento() {
-		
-	}
 	
 }

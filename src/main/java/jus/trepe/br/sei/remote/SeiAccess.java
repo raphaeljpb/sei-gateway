@@ -12,6 +12,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 
+import jus.trepe.br.sei.dto.Unidade;
 import jus.trepe.br.sei.dto.Usuario;
 import jus.trepe.br.sei.remote.error.SeiErrorHandler;
 import jus.trepe.br.sei.remote.service.AuthenticationService;
@@ -28,6 +29,7 @@ public class SeiAccess {
 	private final String baseUrl;
 	@NonNull
 	private static final String TOKEN_HEADER = "token";
+	private static final String UNIDADE_HEADER = "unidade";
 	private static final List<String> IGNORE_PATHS = List.of("/autenticar");
 	
 	public RestTemplate buildTemplate(RestTemplateBuilder builder) {
@@ -66,7 +68,8 @@ public class SeiAccess {
 				if (!autenticado) {
 					auth();
 				}
-				request.getHeaders().add(TOKEN_HEADER, this.usuario.getTokenAutenticacao());			
+				request.getHeaders().add(TOKEN_HEADER, this.usuario.getTokenAutenticacao());
+				request.getHeaders().add(UNIDADE_HEADER, this.usuario.getUnidade().getId().toString());
 			} 
 			
 			return execution.execute(request, body);
@@ -76,6 +79,11 @@ public class SeiAccess {
 			AuthenticationService auth = new AuthenticationService(buildTemplate(new RestTemplateBuilder()));
 			auth.autenticar(this.usuario).ifPresent( u-> {
 				this.usuario.setTokenAutenticacao(u.getTokenAutenticacao());
+				String unidade = (String) u.getLoginData().get("IdUnidadeAtual");
+				if (unidade != null) {
+					this.usuario.setUnidade(
+							new Unidade(Long.parseLong(unidade)));
+				}
 			});
 				
 		}

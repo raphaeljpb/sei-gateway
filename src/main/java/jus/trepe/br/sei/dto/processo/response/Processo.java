@@ -1,9 +1,10 @@
-package jus.trepe.br.sei.dto;
+package jus.trepe.br.sei.dto.processo.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jus.trepe.br.sei.dto.Unidade;
 import jus.trepe.br.sei.dto.processo.Informacoes;
 import jus.trepe.br.sei.dto.processo.TipoProcedimento;
 import lombok.Data;

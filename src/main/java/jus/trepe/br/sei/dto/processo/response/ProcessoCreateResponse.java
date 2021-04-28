@@ -1,4 +1,4 @@
-package jus.trepe.br.sei.dto.response;
+package jus.trepe.br.sei.dto.processo.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
