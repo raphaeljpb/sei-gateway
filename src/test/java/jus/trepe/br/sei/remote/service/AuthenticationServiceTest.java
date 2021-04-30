@@ -2,7 +2,7 @@ package jus.trepe.br.sei.remote.service;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestClientException;
 
@@ -10,24 +10,13 @@ import jus.trepe.br.sei.dto.Usuario;
 import jus.trepe.br.sei.remote.SeiAccess;
 import jus.trepe.br.sei.remote.exception.SeiException;
 
-public class AuthenticationTest {
-	
-	static SeiAccess sei;
-	static String SEI_URL = "http://localhost:8080/sei/modulos/wssei/controlador_ws.php/api/v2";
-	static Usuario validUser;
-	static Usuario invalidUser;
-	
-	@BeforeAll
-	public static void config() {
-		validUser = new Usuario("teste", "teste");
-		invalidUser = new Usuario("teste", "test");
-		sei = new SeiAccess(new Usuario(), SEI_URL);		
-	}
+@DisplayName("Testes de autenticação")
+public class AuthenticationServiceTest extends SeiTest {
 	
 	@AfterEach
 	public void logout() {
 		sei.logout();
-	}
+	}		
 	
 	@Test
 	public void authWithWrongServer() {
