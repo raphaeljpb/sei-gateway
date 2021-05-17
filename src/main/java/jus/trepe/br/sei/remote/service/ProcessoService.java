@@ -6,9 +6,9 @@ import java.util.Optional;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestTemplate;
 
+import jus.trepe.br.sei.dto.processo.request.Processo;
 import jus.trepe.br.sei.dto.processo.request.ProcessoCreate;
 import jus.trepe.br.sei.dto.processo.request.ProcessoUpdate;
-import jus.trepe.br.sei.dto.processo.response.Processo;
 import jus.trepe.br.sei.dto.processo.response.ProcessoCreateResponse;
 import jus.trepe.br.sei.dto.processo.response.ProcessoFindResponse;
 import jus.trepe.br.sei.remote.SeiAccess;

@@ -14,6 +14,7 @@ import jus.trepe.br.sei.dto.documento.request.DocumentoSign;
 import jus.trepe.br.sei.dto.documento.response.Documento;
 import jus.trepe.br.sei.dto.documento.response.DocumentoCreateResponse;
 import jus.trepe.br.sei.dto.documento.response.DocumentoListResponse;
+import jus.trepe.br.sei.remote.SeiAccess;
 import jus.trepe.br.sei.remote.SeiResponseEntity;
 import lombok.NonNull;
 
@@ -26,6 +27,10 @@ public class DocumentoService extends SeiService {
 	private static final String CREATE_DOCUMENTO_PATH = "/documento/{processo}/{tipo}/criar";
 	private static final String DOWNLOAD_DOCUMENTO_PATH = "/documento/baixar/anexo/{id}";
 	private static final String SIGN_DOCUMENTO_PATH = "/documento/assinar";
+	
+	public DocumentoService(SeiAccess access) {
+		super(access);
+	}	
 
 	public DocumentoService(@NonNull RestTemplate restTemplate) {
 		super(restTemplate);

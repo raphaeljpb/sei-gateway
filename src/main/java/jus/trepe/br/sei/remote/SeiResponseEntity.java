@@ -3,6 +3,8 @@ package jus.trepe.br.sei.remote;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -16,6 +18,7 @@ import jus.trepe.br.sei.remote.serialization.InnerWrapperObjectDeserializer;
 import lombok.Data;
 
 @Data
+@JsonInclude(Include.NON_EMPTY)
 public class SeiResponseEntity<T> {
 	
 	private boolean sucesso;

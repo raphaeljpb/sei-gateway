@@ -8,7 +8,6 @@ import org.springframework.core.io.FileSystemResource;
 
 import jus.trepe.br.sei.dto.Assunto;
 import jus.trepe.br.sei.dto.Unidade;
-import jus.trepe.br.sei.dto.Usuario;
 import jus.trepe.br.sei.dto.documento.TipoConferencia;
 import jus.trepe.br.sei.dto.documento.TipoDocumento;
 import jus.trepe.br.sei.dto.documento.request.DocumentoExternoCreate;
@@ -18,6 +17,7 @@ import jus.trepe.br.sei.dto.processo.TipoProcesso;
 import jus.trepe.br.sei.dto.processo.request.ProcessoCreate;
 import jus.trepe.br.sei.dto.processo.request.ProcessoUpdate;
 import jus.trepe.br.sei.dto.processo.response.ProcessoCreateResponse;
+import jus.trepe.br.sei.dto.usuario.request.UsuarioLogin;
 import jus.trepe.br.sei.remote.SeiAccess;
 import jus.trepe.br.sei.remote.service.DocumentoService;
 import jus.trepe.br.sei.remote.service.ProcessoService;
@@ -33,7 +33,7 @@ public class SeiGatewayApp {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Usuario user = new Usuario("teste", "teste");
+		UsuarioLogin user = new UsuarioLogin("teste", "teste");
 		SeiAccess sei = new SeiAccess(user, "http://localhost:8080/sei/modulos/wssei/controlador_ws.php/api/v2");
 //		AuthenticationService auth = new AuthenticationService(sei.buildTemplate(new RestTemplateBuilder()));
 //		auth.autenticar(user).ifPresent( u-> user.setTokenAutenticacao(u.getTokenAutenticacao()));

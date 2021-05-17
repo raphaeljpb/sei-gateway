@@ -2,9 +2,11 @@ package jus.trepe.br.sei.dto;
 
 
 import lombok.Data;
+import lombok.NonNull;
 
 @Data
 public class Interessado {
 	
-    private Integer id;
+	@NonNull
+    private Long id;
 }
