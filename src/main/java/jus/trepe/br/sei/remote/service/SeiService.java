@@ -3,6 +3,7 @@ package jus.trepe.br.sei.remote.service;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +15,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import jus.trepe.br.sei.dto.request.FormSubmission;
+import jus.trepe.br.sei.remote.SeiAccess;
 import jus.trepe.br.sei.remote.SeiResponseEntity;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,10 @@ public abstract class SeiService<T> {
 	
 	@NonNull
 	protected RestTemplate restTemplate;
+	
+	public SeiService(SeiAccess access) {
+		this(access.buildTemplate(new RestTemplateBuilder()));
+	}
 	
 	public RestTemplate getRestTemplate() {
 		return this.restTemplate;
@@ -45,12 +51,7 @@ public abstract class SeiService<T> {
 						 responseType,
 						 params);
 		
-		if (response.getStatusCode() == HttpStatus.OK) {	
-			verificaResponse(response.getBody());
-			return Optional.ofNullable(response.getBody().getEntidade());
-		} else {
-			return Optional.empty();
-		} 
+		return verificaResponse(response);
 	}
 	
 	protected Optional<T> post(String path, FormSubmission payload, ParameterizedTypeReference<SeiResponseEntity<T>> responseType) {
@@ -70,12 +71,7 @@ public abstract class SeiService<T> {
 		ResponseEntity<SeiResponseEntity<T>> response = 
 				getRestTemplate().exchange(path,
 				HttpMethod.GET, new HttpEntity<Map<String, ?>>(payload), responseType, params);
-		if (response.getStatusCode() == HttpStatus.OK) {	
-			verificaResponse(response.getBody());
-			return Optional.ofNullable(response.getBody().getEntidade());
-		} else {
-			return Optional.empty();
-		}
+		return verificaResponse(response);
 	}
 	
 	protected Optional<T> get(String path, Map<String, ?> payload, ParameterizedTypeReference<SeiResponseEntity<T>> responseType) {
@@ -99,8 +95,13 @@ public abstract class SeiService<T> {
 	}
 		
 	
-	private void verificaResponse(SeiResponseEntity<?> seiResponseEntity) {
-		seiResponseEntity.validate();
+	private Optional<T> verificaResponse(ResponseEntity<SeiResponseEntity<T>> response) {
+		if (response.getStatusCode() == HttpStatus.OK) {	
+			response.getBody().validate();
+			return Optional.ofNullable(response.getBody().getEntidade());
+		} else {
+			return Optional.empty();
+		}		
 	}
 
 }

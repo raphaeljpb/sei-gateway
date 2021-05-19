@@ -34,14 +34,16 @@ public class InnerWrapperObjectDeserializer extends JsonDeserializer<Object> imp
 	public Object deserialize(JsonParser parser, DeserializationContext ctxt)
 			throws IOException, JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
-		ObjectNode objectNode = mapper.readTree(parser);
-		JsonNode wrapped = objectNode.get(wrapperKey);
+		JsonNode jsonNode = mapper.readTree(parser);
+		JsonNode wrapped = jsonNode.get(wrapperKey);
 		Object mapped = null;
 		if (wrapped != null) {
-			addRootAttributes(objectNode, wrapped);
+			if (jsonNode instanceof ObjectNode) {
+				addRootAttributes((ObjectNode) jsonNode, wrapped);
+			}
 			mapped = mapIntoObject(wrapped);
 		} else {
-			mapped = mapIntoObject(objectNode);
+			mapped = mapIntoObject(jsonNode);
 		}
 		return mapped;
 	}

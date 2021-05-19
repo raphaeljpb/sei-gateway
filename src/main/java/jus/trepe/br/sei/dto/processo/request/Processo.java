@@ -1,4 +1,4 @@
-package jus.trepe.br.sei.dto.processo.response;
+package jus.trepe.br.sei.dto.processo.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -14,7 +14,7 @@ import lombok.Data;
 public class Processo {
 
 	@JsonProperty("id_root")
-	private Integer id;
+	private Long id;
 	@JsonProperty("status_root")
 	private TipoProcedimento tipoProcedimento;
 	private String numero;

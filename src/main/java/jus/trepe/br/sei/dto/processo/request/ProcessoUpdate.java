@@ -18,11 +18,14 @@ import jus.trepe.br.sei.dto.request.FormSubmission;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @JsonInclude(Include.NON_EMPTY)
 @NoArgsConstructor
+@RequiredArgsConstructor
 public class ProcessoUpdate implements FormSubmission {
+	
 	@NonNull
 	private Long id;
 	@NonNull

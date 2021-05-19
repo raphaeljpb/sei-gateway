@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -13,7 +12,8 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 
 import jus.trepe.br.sei.dto.Unidade;
-import jus.trepe.br.sei.dto.Usuario;
+import jus.trepe.br.sei.dto.usuario.request.UsuarioLogin;
+import jus.trepe.br.sei.dto.usuario.response.Usuario;
 import jus.trepe.br.sei.remote.error.SeiErrorHandler;
 import jus.trepe.br.sei.remote.service.AuthenticationService;
 import lombok.NonNull;
@@ -22,12 +22,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SeiAccess {
 	
-	private static final int TIMEOUT_MINUTES = 1;
 	private RestTemplate restTemplate;
 	@NonNull
-	private Usuario usuario;
-	private final String baseUrl;
+	private UsuarioLogin autenticacao;
 	@NonNull
+	private final String baseUrl;
+	private Usuario usuario;
+	private static final int TIMEOUT_MINUTES = 1;
 	private static final String TOKEN_HEADER = "token";
 	private static final String UNIDADE_HEADER = "unidade";
 	private static final List<String> IGNORE_PATHS = List.of("/autenticar");
@@ -37,7 +38,7 @@ public class SeiAccess {
 			.setReadTimeout(Duration.ofMinutes(TIMEOUT_MINUTES))
 			.rootUri(baseUrl)
 			.errorHandler(new SeiErrorHandler())
-			.additionalInterceptors(new SeiAuthHeaderInterceptor(this.usuario))
+			.additionalInterceptors(new SeiAuthHeaderInterceptor(autenticacao))
 			.build();
 		return this.restTemplate;
 	}	
@@ -46,12 +47,24 @@ public class SeiAccess {
 		return this.restTemplate;
 	}
 	
+	public void setAutenticacao(UsuarioLogin autenticacao) {
+		this.autenticacao = autenticacao;
+	}
+	
+	public void setUnidade(Unidade unidade) {
+		this.usuario.setUnidade(unidade);
+	}
+	
+	public void logout() {
+		usuario = new Usuario();
+	}	
+	
 	private class SeiAuthHeaderInterceptor implements ClientHttpRequestInterceptor {
 		
-		private Usuario usuario;
+		private UsuarioLogin autenticacao;
 		
-		public SeiAuthHeaderInterceptor(Usuario usuario) { 
-			this.usuario = usuario;
+		public SeiAuthHeaderInterceptor(UsuarioLogin autenticacao) { 
+			this.autenticacao = autenticacao;
 		}
 
 		@Override
@@ -62,14 +75,16 @@ public class SeiAccess {
 			boolean authPath = IGNORE_PATHS.stream().anyMatch((path) -> {
 				return request.getURI().getPath().endsWith(path);
 			});
-			boolean autenticado = Strings.isNotEmpty(usuario.getTokenAutenticacao());
+			boolean autenticado = usuario != null && usuario.getTokenAutenticacao() != null;
 			
 			if (!authPath) {
 				if (!autenticado) {
 					auth();
 				}
-				request.getHeaders().add(TOKEN_HEADER, this.usuario.getTokenAutenticacao());
-				request.getHeaders().add(UNIDADE_HEADER, this.usuario.getUnidade().getId().toString());
+				request.getHeaders().add(TOKEN_HEADER, usuario.getTokenAutenticacao());
+				if (usuario.getUnidade() != null) {
+					request.getHeaders().addIfAbsent(UNIDADE_HEADER, usuario.getUnidade().getId().toString());
+				}
 			} 
 			
 			return execution.execute(request, body);
@@ -77,16 +92,7 @@ public class SeiAccess {
 		
 		private void auth() {
 			AuthenticationService auth = new AuthenticationService(buildTemplate(new RestTemplateBuilder()));
-			auth.autenticar(this.usuario).ifPresent( u-> {
-				this.usuario.setTokenAutenticacao(u.getTokenAutenticacao());
-				String unidade = (String) u.getLoginData().get("IdUnidadeAtual");
-				if (unidade != null) {
-					this.usuario.setUnidade(
-							new Unidade(Long.parseLong(unidade)));
-				}
-			});
-				
+			usuario = auth.autenticar(this.autenticacao).orElseThrow();
 		}
 	}
-
 }

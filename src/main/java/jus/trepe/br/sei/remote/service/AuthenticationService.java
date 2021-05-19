@@ -5,18 +5,26 @@ import java.util.Optional;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestTemplate;
 
-import jus.trepe.br.sei.dto.Usuario;
+import jus.trepe.br.sei.dto.usuario.request.UsuarioLogin;
+import jus.trepe.br.sei.dto.usuario.response.Usuario;
+import jus.trepe.br.sei.remote.SeiAccess;
 import jus.trepe.br.sei.remote.SeiResponseEntity;
 
-public class AuthenticationService extends SeiService<Usuario> {
+@SuppressWarnings("rawtypes")
+public class AuthenticationService extends SeiService {
 	
 	private static final String AUTH_PATH = "/autenticar";
+	
+	public AuthenticationService(SeiAccess access) {
+		super(access);
+	}
 
 	public AuthenticationService(RestTemplate restTemplate) {
 		super(restTemplate);
 	}
 
-	public Optional<Usuario> autenticar(Usuario usuario) {
+	@SuppressWarnings("unchecked")
+	public Optional<Usuario> autenticar(UsuarioLogin usuario) {
 		return this.post(AUTH_PATH, usuario, new ParameterizedTypeReference<SeiResponseEntity<Usuario>>(){});
 	}
 

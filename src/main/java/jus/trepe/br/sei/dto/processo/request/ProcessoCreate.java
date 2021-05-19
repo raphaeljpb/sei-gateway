@@ -16,9 +16,11 @@ import jus.trepe.br.sei.dto.request.FormSubmission;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@RequiredArgsConstructor
 @JsonInclude(Include.NON_EMPTY)
 public class ProcessoCreate implements FormSubmission {
 
@@ -26,7 +28,8 @@ public class ProcessoCreate implements FormSubmission {
 	private List<Assunto> assuntos = new ArrayList<>();
 	private List<Interessado> interessados = new ArrayList<>();
 	private String especificacao;
-	private String observacoes;
+	@JsonProperty("observacoes")
+	private String observacao;
 	@NonNull
 	@JsonProperty("tipoProcesso")
 	private TipoProcesso tipo;

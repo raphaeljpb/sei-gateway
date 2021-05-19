@@ -12,7 +12,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 import jus.trepe.br.sei.dto.documento.TipoConferencia;
-import jus.trepe.br.sei.dto.request.FormSubmission;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,9 @@ import lombok.NonNull;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class DocumentoExternoCreate extends DocumentoCreate implements FormSubmission {
+@Builder
+@AllArgsConstructor
+public class DocumentoExternoCreate extends DocumentoCreate {
 	
 	private String numero;
 	@NonNull
@@ -36,12 +39,9 @@ public class DocumentoExternoCreate extends DocumentoCreate implements FormSubmi
 	
 	@Override
 	public MultiValueMap<String, Object> submitFields() {
-		MultiValueMap<String, Object> form =  FormSubmission.super.submitFields();
+		MultiValueMap<String, Object> form = super.submitFields();
 		form.add("anexo", anexo);
 		
 		return form;
 	}
-
-	
-	
 }

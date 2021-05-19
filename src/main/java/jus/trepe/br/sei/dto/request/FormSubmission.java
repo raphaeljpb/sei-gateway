@@ -12,7 +12,7 @@ public interface FormSubmission {
 	public default MultiValueMap<String, Object> submitFields() {
 		MultiValueMap<String, Object> form = new LinkedMultiValueMap<>();
 		ObjectMapper mapper = new ObjectMapper();
-
+		
 		@SuppressWarnings("unchecked")
 		Map<String, Object> maps = mapper.convertValue(this, Map.class);
 		form.setAll(maps);		

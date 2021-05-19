@@ -6,11 +6,12 @@ import java.util.Optional;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestTemplate;
 
+import jus.trepe.br.sei.dto.processo.request.Processo;
 import jus.trepe.br.sei.dto.processo.request.ProcessoCreate;
 import jus.trepe.br.sei.dto.processo.request.ProcessoUpdate;
-import jus.trepe.br.sei.dto.processo.response.Processo;
 import jus.trepe.br.sei.dto.processo.response.ProcessoCreateResponse;
 import jus.trepe.br.sei.dto.processo.response.ProcessoFindResponse;
+import jus.trepe.br.sei.remote.SeiAccess;
 import jus.trepe.br.sei.remote.SeiResponseEntity;
 
 @SuppressWarnings("rawtypes")
@@ -20,7 +21,11 @@ public class ProcessoService extends SeiService {
 	private static final String CREATE_PATH = "/processo/criar";
 	private static final String UPDATE_PATH = "/processo/{id}/alterar";
 	private static final String GET_PROTOCOLO_PATH = "/processo/consultar?protocoloFormatado={protocoloFormatado}";
-
+	
+	public ProcessoService(SeiAccess access) {
+		super(access);
+	}
+	
 	public ProcessoService(RestTemplate restTemplate) {
 		super(restTemplate);
 	}
