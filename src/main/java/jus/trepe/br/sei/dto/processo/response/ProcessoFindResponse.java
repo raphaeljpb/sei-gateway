@@ -8,7 +8,7 @@ import lombok.Data;
 public class ProcessoFindResponse {
 	
 	@JsonProperty("IdProcedimento")
-	private Integer id;
+	private Long id;
 	@JsonProperty("ProtocoloProcedimentoFormatado")
 	private String protocolo;
 	@JsonProperty("NomeTipoProcedimento")
