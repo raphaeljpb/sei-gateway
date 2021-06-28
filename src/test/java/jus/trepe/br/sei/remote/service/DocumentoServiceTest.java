@@ -65,6 +65,13 @@ public class DocumentoServiceTest extends SeiTest {
 		Documento documento = service.get(documentoCreateResponse.getId(), jus.trepe.br.sei.remote.service.TipoDocumento.INTERNO).orElseThrow();
 		Assertions.assertEquals(documentoCreateResponse.getId(), documento.getId());
 		Assertions.assertFalse(service.viewContent(documento.getId()).orElseThrow().isEmpty());
+		Assertions.assertNotNull(documento.getHipoteseLegal());
+		Assertions.assertEquals(HipoteseLegal.HIPOTESES.get(0).getNome(), documento.getHipoteseLegal().getNome());
+		Assertions.assertEquals(HipoteseLegal.HIPOTESES.get(0).getId(), documento.getHipoteseLegal().getId());
+		Assertions.assertNotNull(documento.getNivelAcesso());
+		Assertions.assertEquals(NivelAcesso.RESTRITO, documento.getNivelAcesso());
+		
+		
 	}
 	
 	@Test
@@ -91,6 +98,11 @@ public class DocumentoServiceTest extends SeiTest {
 		Assertions.assertFalse(documento.getNome().isEmpty());
 		Assertions.assertEquals(now, documento.getDataElaboracao());
 		Assertions.assertEquals(resource.contentLength(), service.download(documento.getId()).length);
+		Assertions.assertNotNull(documento.getHipoteseLegal());
+		Assertions.assertEquals(HipoteseLegal.HIPOTESES.get(0).getNome(), documento.getHipoteseLegal().getNome());
+		Assertions.assertEquals(HipoteseLegal.HIPOTESES.get(0).getId(), documento.getHipoteseLegal().getId());
+		Assertions.assertNotNull(documento.getNivelAcesso());
+		Assertions.assertEquals(NivelAcesso.RESTRITO, documento.getNivelAcesso());		
 	}
 	
 	@Test

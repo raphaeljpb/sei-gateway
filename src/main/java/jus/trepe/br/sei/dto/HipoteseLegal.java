@@ -6,13 +6,16 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class HipoteseLegal {
 
 	@JsonValue
 	private int id;
 	private String nome;
+	private String baseLegal;
 	public static final List<HipoteseLegal> HIPOTESES;
 	
 	static {
