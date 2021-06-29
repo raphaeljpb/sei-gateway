@@ -29,17 +29,17 @@ public class Documento {
 	private HipoteseLegal hipoteseLegal = new HipoteseLegal();
 	
 	@JsonSetter(value="idHipoteseLegal", nulls=Nulls.AS_EMPTY)
-	public void configuraId(Integer id) {
+	private void configuraId(Integer id) {
 		hipoteseLegal.setId(id);
 	}
 	
 	@JsonSetter(value="nomeHipoteseLegal", nulls=Nulls.AS_EMPTY)
-	public void configuraNomeHipoteseLegal(String nome) {
+	private void configuraNomeHipoteseLegal(String nome) {
 		hipoteseLegal.setNome(nome);
 	}	
 	
 	@JsonSetter(value="baseLegal", nulls=Nulls.AS_EMPTY)
-	public void configuraBaseHipoteseLegal(String baseLegal) {
+	private void configuraBaseHipoteseLegal(String baseLegal) {
 		hipoteseLegal.setBaseLegal(baseLegal);
 	}
 	

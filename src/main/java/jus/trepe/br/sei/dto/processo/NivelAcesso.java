@@ -13,5 +13,19 @@ public enum NivelAcesso {
 	public int toValue() {
 		return ordinal();
 	}
+	
+	public boolean isPublico() {
+		return this.ordinal() == PUBLICO.ordinal();
+	}
+	
+	public boolean isRestrito() {
+		return this.ordinal() == RESTRITO.ordinal();
+	}
+	
+	public boolean isSigiloso() {
+		return this.ordinal() == SIGILOSO.ordinal();
+	}
+	
+	
 
 }

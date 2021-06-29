@@ -42,7 +42,7 @@ public class SeiResponseEntity<T> {
 	
 	@SuppressWarnings("unchecked")
 	@JsonSetter(value="mensagem", nulls=Nulls.AS_EMPTY)
-	public void configuraMensagem(Object mensagem) {
+	private void configuraMensagem(Object mensagem) {
 		if (mensagem instanceof List) {
 			mensagens.addAll((List<String>) mensagem);   
 		} else {

@@ -19,7 +19,7 @@ public class Usuario {
 	private Unidade unidade;
 	
 	@JsonSetter(value="loginData", nulls=Nulls.AS_EMPTY)
-	public void configuraAtributos(Map<String, ?> atributos) {
+	private void configuraAtributos(Map<String, ?> atributos) {
 		this.loginData = atributos;
 		unidade = new Unidade(Long.parseLong((String) atributos.get(ID_UNIDADE_ATUAL)));
 	}
