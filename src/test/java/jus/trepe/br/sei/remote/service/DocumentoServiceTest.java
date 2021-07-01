@@ -115,7 +115,7 @@ public class DocumentoServiceTest extends SeiTest {
 	@Test
 	@Order(4)
 	public void assinaDocumento() {
-		service.list(processoId).ifPresent((documentos)->{
+		service.list(processoId).ifPresent((documentos) -> {
 			documentos.forEach((documento) -> {
 				DocumentoSign sign = DocumentoSign.builder()
 							.idOrgao(1)
@@ -126,6 +126,21 @@ public class DocumentoServiceTest extends SeiTest {
 							.documentoId(documento.getId())
 							.build();
 				service.sign(sign);
+			});
+		});
+	}
+	
+	@Test
+	@Order(5)
+	public void verificaHipoteseLegal() {
+		service.list(67L).ifPresent((documentos) -> {
+			documentos.forEach((documento) -> {
+				service.get(documento.getId(), jus.trepe.br.sei.remote.service.TipoDocumento.INTERNO)
+					.filter(doc -> !doc.getNivelAcesso().isPublico())
+					.ifPresent((doc) -> {
+						Assertions.assertNotNull(doc.getHipoteseLegal().getNome());
+						Assertions.assertNotNull(doc.getHipoteseLegal().getBaseLegal());
+					});
 			});
 		});
 	}
