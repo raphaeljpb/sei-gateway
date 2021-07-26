@@ -51,7 +51,7 @@ public abstract class SeiService<T> {
 						 responseType,
 						 params);
 		
-		return verificaResponse(response);
+		return convertResponse(response);
 	}
 	
 	protected Optional<T> post(String path, FormSubmission payload, ParameterizedTypeReference<SeiResponseEntity<T>> responseType) {
@@ -71,8 +71,19 @@ public abstract class SeiService<T> {
 		ResponseEntity<SeiResponseEntity<T>> response = 
 				getRestTemplate().exchange(path,
 				HttpMethod.GET, new HttpEntity<Map<String, ?>>(payload), responseType, params);
-		return verificaResponse(response);
+		
+		return convertResponse(response);
 	}
+	
+	protected SeiResponseEntity<T> getSeiResponseEntity(String path, Map<String, ?> payload, 
+			ParameterizedTypeReference<SeiResponseEntity<T>> responseType, Map<String, ?> params) {		
+		ResponseEntity<SeiResponseEntity<T>> response = 
+				getRestTemplate().exchange(path,
+				HttpMethod.GET, new HttpEntity<Map<String, ?>>(payload), responseType, params);
+		validaResponse(response);
+		
+		return response.getBody();
+	}	
 	
 	protected Optional<T> get(String path, Map<String, ?> payload, ParameterizedTypeReference<SeiResponseEntity<T>> responseType) {
 		return this.get(path, payload, responseType, Map.of());
@@ -93,11 +104,16 @@ public abstract class SeiService<T> {
 	protected Optional<T> get(String path) {
 		return this.get(path, null, new ParameterizedTypeReference<SeiResponseEntity<T>>(){}, Map.of());
 	}
-		
 	
-	private Optional<T> verificaResponse(ResponseEntity<SeiResponseEntity<T>> response) {
+	private void validaResponse(ResponseEntity<SeiResponseEntity<T>> response) {
 		if (response.getStatusCode() == HttpStatus.OK) {	
 			response.getBody().validate();
+		}
+	}
+		
+	private Optional<T> convertResponse(ResponseEntity<SeiResponseEntity<T>> response) {
+		validaResponse(response);
+		if (response.getStatusCode() == HttpStatus.OK) {	
 			return Optional.ofNullable(response.getBody().getEntidade());
 		} else {
 			return Optional.empty();

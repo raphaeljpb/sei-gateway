@@ -70,8 +70,6 @@ public class DocumentoServiceTest extends SeiTest {
 		Assertions.assertEquals(HipoteseLegal.HIPOTESES.get(0).getId(), documento.getHipoteseLegal().getId());
 		Assertions.assertNotNull(documento.getNivelAcesso());
 		Assertions.assertEquals(NivelAcesso.RESTRITO, documento.getNivelAcesso());
-		
-		
 	}
 	
 	@Test
@@ -143,6 +141,27 @@ public class DocumentoServiceTest extends SeiTest {
 					});
 			});
 		});
+	}
+	
+	@Test
+	@Order(6)
+	public void recuperaProcessoComMuitosDocumentos() {
+		int quantidadeDocumentosAdicionados = 15;
+		for (int i = 1; i <= quantidadeDocumentosAdicionados; i++) {
+			DocumentoInternoCreate documentoInternoCreate = new DocumentoInternoCreate();
+			documentoInternoCreate.setDescricao("JUnit - Documento Interno - "+i)
+				.setHipoteseLegal(HipoteseLegal.HIPOTESES.get(0))
+				.setNivelAcesso(NivelAcesso.RESTRITO)
+				.setTipoDocumento(TipoDocumento.TIPOS.get(0))
+				.setObservacao("JUnit - Observação documento interno")
+				.setUnidadeGeradora(new Unidade(ID_INTERESSADO_VALIDO))
+				.addAssunto(Assunto.ASSUNTOS.get(0))
+				.addInteressado(new Interessado(ID_INTERESSADO_VALIDO));
+			
+			service.create(processoId, documentoInternoCreate);			
+		}
+		List<DocumentoListResponse> response = service.list(processoId).orElseThrow();		
+		Assertions.assertEquals(quantidadeDocumentosAdicionados+2, response.size());		
 	}
 	
 }
