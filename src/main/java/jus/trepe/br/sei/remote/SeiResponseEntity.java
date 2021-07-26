@@ -27,6 +27,7 @@ public class SeiResponseEntity<T> {
 	@InnerWrapperObject("atributos")	
 	private T entidade;
 	private List<String> mensagens = new ArrayList<>();
+	private int total;
 	
 	public void validate() {
 		if (!sucesso) {

@@ -1,5 +1,6 @@
 package jus.trepe.br.sei.remote.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,7 +22,7 @@ import lombok.NonNull;
 @SuppressWarnings("rawtypes")
 public class DocumentoService extends SeiService {
 	
-	private static final String LIST_DOCUMENTOS_BY_PROCESSO_PATH = "/documento/listar/{processo}";
+	private static final String LIST_DOCUMENTOS_BY_PROCESSO_PATH = "/documento/listar/{processo}?limit={quantidadePorPagina}&start={pagina}";
 	private static final String VIEW_DOCUMENTO_PATH = "/documento/{id}/interno/visualizar";
 	private static final String GET_DOCUMENTO_PATH = "/documento/{tipo}/consultar/{id}";
 	private static final String CREATE_DOCUMENTO_PATH = "/documento/{processo}/{tipo}/criar";
@@ -38,8 +39,20 @@ public class DocumentoService extends SeiService {
 	
 	@SuppressWarnings("unchecked")
 	public Optional<List<DocumentoListResponse>> list(Long idProcesso) {
-		return get(LIST_DOCUMENTOS_BY_PROCESSO_PATH, 
-				new ParameterizedTypeReference<SeiResponseEntity<List<DocumentoListResponse>>>(){}, Map.of("processo", idProcesso));
+		List<DocumentoListResponse> documentos = new ArrayList<>();
+		int totalDePaginas = 0, pagina = 0, quantidadePorPagina = 10;
+		
+		do { 
+			SeiResponseEntity<List<DocumentoListResponse>> seiResponseEntity = getSeiResponseEntity(LIST_DOCUMENTOS_BY_PROCESSO_PATH,
+					null,
+					new ParameterizedTypeReference<SeiResponseEntity<List<DocumentoListResponse>>>(){}, 				
+					Map.of("processo", idProcesso, "quantidadePorPagina", quantidadePorPagina, "pagina", pagina));
+			documentos.addAll(seiResponseEntity.getEntidade());
+			totalDePaginas = seiResponseEntity.getTotal() / quantidadePorPagina;
+			pagina++;
+		} while (pagina <= totalDePaginas);
+		
+		return Optional.of(documentos);
 	}
 	
 	public Optional<DocumentoCreateResponse> create(Long idProcesso, DocumentoInternoCreate documento) {
