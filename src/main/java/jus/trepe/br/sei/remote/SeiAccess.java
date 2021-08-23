@@ -2,6 +2,7 @@ package jus.trepe.br.sei.remote;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -78,7 +79,7 @@ public class SeiAccess {
 			boolean autenticado = usuario != null && usuario.getTokenAutenticacao() != null;
 			
 			if (!authPath) {
-				if (!autenticado) {
+				if (!autenticado || tokenExpirado()) {
 					auth();
 				}
 				request.getHeaders().add(TOKEN_HEADER, usuario.getTokenAutenticacao());
@@ -93,6 +94,10 @@ public class SeiAccess {
 		private void auth() {
 			AuthenticationService auth = new AuthenticationService(buildTemplate(new RestTemplateBuilder()));
 			usuario = auth.autenticar(this.autenticacao).orElseThrow();
+		}
+		
+		private boolean tokenExpirado() {		
+			return usuario != null && LocalDate.now().isAfter(usuario.getDataLogin());
 		}
 	}
 }

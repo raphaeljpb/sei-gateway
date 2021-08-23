@@ -1,5 +1,6 @@
 package jus.trepe.br.sei.dto.usuario.response;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,6 +18,11 @@ public class Usuario {
 	private String tokenAutenticacao;
 	private Map<String, ?> loginData;
 	private Unidade unidade;
+	private LocalDate dataLogin;
+	
+	public Usuario() {
+		this.dataLogin = LocalDate.now();
+	}
 	
 	@JsonSetter(value="loginData", nulls=Nulls.AS_EMPTY)
 	private void configuraAtributos(Map<String, ?> atributos) {
