@@ -52,7 +52,7 @@ public class DocumentoCreate implements FormSubmission {
 	
 	@JsonGetter("assuntos")
 	public String getAssuntos() {
-		return assuntos.stream()
+		return assuntos.stream()				
 				.map(assunto -> assunto.getId().toString())
 				.collect(Collectors.joining(","));
 	}

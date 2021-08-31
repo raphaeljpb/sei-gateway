@@ -3,6 +3,8 @@ package jus.trepe.br.sei.dto.usuario.response;
 import java.time.LocalDate;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -11,6 +13,7 @@ import jus.trepe.br.sei.dto.Unidade;
 import lombok.Data;
 
 @Data
+@JsonInclude(Include.NON_EMPTY)
 public class Usuario {
 	
 	private static final String ID_UNIDADE_ATUAL = "IdUnidadeAtual";

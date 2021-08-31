@@ -28,11 +28,17 @@ public class SeiAccess {
 	private UsuarioLogin autenticacao;
 	@NonNull
 	private final String baseUrl;
+	private Unidade unidade;
 	private Usuario usuario;
 	private static final int TIMEOUT_MINUTES = 1;
 	private static final String TOKEN_HEADER = "token";
 	private static final String UNIDADE_HEADER = "unidade";
 	private static final List<String> IGNORE_PATHS = List.of("/autenticar");
+	
+	public SeiAccess(UsuarioLogin login, String baseUrl, Unidade unidade) {
+		this(login, baseUrl);
+		this.unidade = unidade;
+	}
 	
 	public RestTemplate buildTemplate(RestTemplateBuilder builder) {
 		this.restTemplate = builder.setConnectTimeout(Duration.ofMinutes(TIMEOUT_MINUTES))
@@ -50,10 +56,6 @@ public class SeiAccess {
 	
 	public void setAutenticacao(UsuarioLogin autenticacao) {
 		this.autenticacao = autenticacao;
-	}
-	
-	public void setUnidade(Unidade unidade) {
-		this.usuario.setUnidade(unidade);
 	}
 	
 	public void logout() {
@@ -83,8 +85,12 @@ public class SeiAccess {
 					auth();
 				}
 				request.getHeaders().add(TOKEN_HEADER, usuario.getTokenAutenticacao());
-				if (usuario.getUnidade() != null) {
-					request.getHeaders().addIfAbsent(UNIDADE_HEADER, usuario.getUnidade().getId().toString());
+				
+				if (unidade == null) {
+					unidade = usuario.getUnidade();
+				}
+				if (unidade != null) {
+					request.getHeaders().add(UNIDADE_HEADER, unidade.getId().toString());
 				}
 			} 
 			
